@@ -1,0 +1,357 @@
+`	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For what its worth</title>
+    <style>
+        :root {
+            --primary: #ff4b72;
+            --primary-glow: rgba(255, 75, 114, 0.4);
+            --bg-grad: linear-gradient(135deg, #ffeef2 0%, #ffd1dc 100%);
+            --text: #4a1525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-grad);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px; /* Added more breathing room on top/bottom */
+            overflow-y: auto; /* ALLOWS THE WHOLE PAGE TO SCROLL IF NEEDED */
+            position: relative;
+        }
+
+        /* --- FLOATING HEARTS BACKGROUND --- */
+        .hearts-bg {
+            position: fixed; /* Fixed so it stays put while scrolling */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .heart-container {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp 8s linear infinite;
+        }
+
+        .heart {
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            transform: rotate(-45deg);
+            opacity: 0.25;
+        }
+
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: 10px; top: 0; }
+
+        .heart-container:nth-child(1) { left: 10%; animation-duration: 6s; transform: scale(0.7); }
+        .heart-container:nth-child(2) { left: 25%; animation-duration: 9s; animation-delay: 2s; transform: scale(1); }
+        .heart-container:nth-child(3) { left: 40%; animation-duration: 7s; animation-delay: 1s; transform: scale(1.3); }
+        .heart-container:nth-child(4) { left: 60%; animation-duration: 11s; animation-delay: 4s; transform: scale(0.8); }
+        .heart-container:nth-child(5) { left: 75%; animation-duration: 6s; animation-delay: 0.5s; transform: scale(1.1); }
+        .heart-container:nth-child(6) { left: 90%; animation-duration: 10s; animation-delay: 3s; transform: scale(0.9); }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(var(--scale, 1)); opacity: 0; }
+            15% { opacity: 0.3; }
+            85% { opacity: 0.3; }
+            100% { transform: translateY(-110vh) translateX(20px) scale(var(--scale, 1)); opacity: 0; }
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .wrapper {
+            background: rgba(255, 255, 255, 0.85);
+            max-width: 800px;
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(255, 75, 114, 0.15);
+            backdrop-filter: blur(15px);
+            z-index: 10;
+            border: 3px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent background leak, inner scroll handled below */
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .header {
+            padding: 30px 20px 15px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-shadow: 0 2px 10px rgba(255, 75, 114, 0.2);
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        /* Side-by-Side Content Screen */
+        .main-content {
+            display: flex;
+            height: 350px; /* FIXED HEIGHT SO THE INNER SIDE SCROLLS CLEANLY */
+            border-top: 2px dashed #ffb6c1;
+            border-bottom: 2px dashed #ffb6c1;
+        }
+
+        /* Left Navigation tabs */
+        .tabs {
+            width: 35%;
+            background: rgba(255, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            border-right: 2px dashed #ffb6c1;
+            overflow-y: auto; /* In case you add way more tab buttons */
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 20px 15px;
+            text-align: left;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 75, 114, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            padding-left: 25px;
+        }
+
+        /* Right Content Panel - FIXED FOR LARGE TEXT */
+        .panel {
+            width: 65%;
+            padding: 30px;
+            background: #ffffff;
+            overflow-y: auto; /* THIS LETS YOU SCROLL INSIDE THE MESSAGE BOX */
+        }
+
+        /* Cute Aesthetic Scrollbar for Long Text */
+        .panel::-webkit-scrollbar, .tabs::-webkit-scrollbar {
+            width: 6px;
+        }
+        .panel::-webkit-scrollbar-track, .tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .panel::-webkit-scrollbar-thumb, .tabs::-webkit-scrollbar-thumb {
+            background: #ffb6c1;
+            border-radius: 10px;
+        }
+
+        .story-text {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            text-align: left;
+        }
+
+        .story-text.active {
+            display: block;
+        }
+
+        .story-text h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            position: sticky; /* Keeps the heading pinned while scrolling text */
+            top: 0;
+            background: #ffffff;
+            padding-bottom: 5px;
+        }
+
+        /* --- Footer / Decision Area --- */
+        .footer {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer p {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-box {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            position: relative;
+            height: 55px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        #yes {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        #yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 75, 114, 0.6);
+        }
+
+        #no {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            position: absolute;
+            transition: all 0.15s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Mobile Fix */
+        @media (max-width: 600px) {
+            .main-content { flex-direction: column; height: auto; max-height: 500px; }
+            .tabs { width: 100%; border-right: none; border-bottom: 2px dashed #ffb6c1; overflow-y: visible;}
+            .panel { width: 100%; padding: 25px; }
+            .tab-btn { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-bg">
+        <div class="heart-container" style="--scale: 0.7;"><div class="heart"></div></div>
+        <div class="heart-container" style="--scale: 1.0;"><div class="heart"></div></div>
+        <div class="heart-container" style="--scale: 1.3;"><div class="heart"></div></div>
+        <div class="heart-container" style="--scale: 0.8;"><div class="heart"></div></div>
+        <div class="heart-container" style="--scale: 1.1;"><div class="heart"></div></div>
+        <div class="heart-container" style="--scale: 0.9;"><div class="heart"></div></div>
+    </div>
+
+    <div class="wrapper">
+        <div class="header">
+            <h1>I'm Sorry Khadeeja..️</h1>
+            <p>Please click through my confessions below...</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'did')">💔 What I Did</button>
+                <button class="tab-btn" onclick="openTab(event, 'forgive')">🧸 Why Forgive Me?</button>
+                <button class="tab-btn" onclick="openTab(event, 'todo')">🌹 What I Wanna Do</button>
+                <button class="tab-btn" onclick="openTab(event, 'why')">✨ Why I Wanna Do It</button>
+            </div>
+
+            <div class="panel">
+                <div id="did" class="story-text active">
+                    <h3>What I Did 💔</h3>
+                    <p>I know i was a total bum na khadeeja aur na I know I said very mean and bad things..I said stuff that I know if u told me would put me down so bad and if I put myself in ur shoes, you have poora right to not wanna talk mere se and think indifferently of me :(. I misread the entire communication..whatever the reason i meant no harm ever.</p>
+                </div>
+
+                <div id="forgive" class="story-text">
+                    <h3>Why You Should Forgive Me 🧸</h3>
+                    <p>You know me khadeeja and ap has known me for a very long time AND in the time I can hope to know that ur one of the very less people that know me this well and even tho this is the first time and you dont know if ill do it agsin I know how it goes but what i meant was ke you know i always try to learn and grow and be better ive always been about that..and i wanna proove it to you. I hate to be the person to make u feel aise and i never want to be the person that made u upset and i wanna be the person u can talk to very comfortably to... i really see you with so much grace and respect and ur one of the very few people aswell that ive ever been this close to ur precious and i dont want my precious person to be upset i always want you to be happy i always worry about you even tho i cant say somethings you know why pr khadeeja na ur one of the very few people that made me feel what i felt and im not biased towards it cause i know well why i feel what i do and its because ur a such a wonderful human to me and i promise i mean not to praise mindlessly..you deserve so much love and so much affection from everyone. i see ur efforts in whatever you do khadeeja.</p>
+                </div>
+
+                <div id="todo" class="story-text">
+                    <h3>What I Wanna Do 🥰</h3>
+                    <p>I to be better and i want to understand and WE CAN BE BESTIES AGAIN!! i miss you and i dont wanna lose over this and i wanna promise you that ill never do it again ever ever ever i just want to see you talk to me like u talk to me i mean yk just with ease.. tho i cant buy you cinnabon and walk with you right now..i wanna talk about stupid things and i wanna move forward and not dwell in the unfortunate things i want to see a better day around ap and be happy for you and see you grow i promise ive always wanted this.</p>
+                </div>
+
+                <div id="why" class="story-text">
+                    <h3>Why I Wanna Do It ✨</h3>
+                    <p>I added this cause I CAN. even tho i said why but ill say some more cause na i wanna do it beacause khadeeja's such a close person to me and khadeeja makes me feel happy and heard and even tho im an idiot she still talks to me and i like that, this weird feeling in my chest beacause I love her so much. I just am happy whenever she talks to me and tells me anything i find it so fun and it can be the must boring topic but if she talks about im all ears and tears and I wanna make it right and wanna be there for khadeeja aswell and make her feel the same and the trust again and i hope she lets me do that. And she probably thinks im trying for something but im not im just not, I know im in the moment and im grateful that shes around that keeps me feel safe cause i hate losing people i love and it scares me</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Can we be okay again? Please, forgive and forget just this once? Something maybe you learnt from me? 👉👈</p>
+            <div class="btn-box">
+                <button id="yes" class="btn" onclick="celebrate()">Yes, I Forgive You.</button>
+                <button id="no" class="btn" onmouseover="teleportNo()" onclick="teleportNo()">No 💔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabId) {
+            const texts = document.querySelectorAll('.story-text');
+            texts.forEach(text => text.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            
+            // Auto-scroll back to top of panel when clicking a new tab
+            document.querySelector('.panel').scrollTop = 0;
+        }
+
+        function teleportNo() {
+            const noBtn = document.getElementById('no');
+            const x = Math.floor(Math.random() * 180) - 90;
+            const y = Math.floor(Math.random() * 50) - 25;
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function celebrate() {
+            alert("💖 SUCCESS! My heart is full again! 💖\n\nThank you for being the sweetest person ever. I'm coming over to give you the biggest hug right now deeejaaa");
+        }
+    </script>
+</body>
+</html>
